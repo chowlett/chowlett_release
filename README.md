@@ -11,12 +11,10 @@ A private ruby gem that adds the following rake tasks to the development environ
 | strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                |                                                |
 | strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS)                                             |                                          |
 ## Installation
-1. Provide credentials that will be used by bundler to access GitHub packages to retrieve the gem.  Do this by adding an entry to ~/.gem/credentials:
-
-```aiignore
-:github: Bearer <your_github_personal access_token>
+1. Provide credentials that will be used by bundler to access GitHub packages to retrieve the gem.  Do this by configuring the bundler as follows:
+```bash
+    bundle config set --global https://rubygems.pkg.github.com/strong-start username:<your_github_personal access_token>
 ```
-
 "<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 
 2. Add the following to your application's Gemfile:
@@ -41,3 +39,13 @@ You build and deploy to staging or production from a development instance. With 
 3. `rails strongstart_release:deploy:staging`
 
 Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
+
+## Development
+
+Configure the gem command so you can publish to GitHub Packages, by adding an entry to ~/.gem/credentials:
+
+```aiignore
+:github: Bearer <your_github_personal access_token>
+```
+
+"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and must have at the "read:packages" and "write:packages" scopes. Normally you will be using the same token that you used to configure the bundler (see above).
