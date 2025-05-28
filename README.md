@@ -1,43 +1,43 @@
 # StrongstartRelease
 
-TODO: Delete this and the text below, and describe your gem
+A private ruby gem that adds the following rake tasks to a Strong Start web application - SiTE SOURCE or GRFS:
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/strongstart_release`. To experiment with that code, run `bin/console` for an interactive prompt.
-
+| Task                                  | Description                                                                                                           |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| strong_start_release:echo             | Prints a "Hello" message to the console. Verifies that the gem is functional.                                         |
+| strong_start_release:aws:verify       | Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used. |
+| strongstart_release:build:staging     | Build the staging release for the including app (SiTE SOURCE or GRFS)                                                 |                                                |
+| strongstart_release:build:production  | Build the production release for the including app (SiTE SOURCE or GRFS)                                              |                                          |
+| strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                |                                                |
+| strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS)                                             |                                          |
 ## Installation
+1. Provide credentials that will be used by bundler to access GitHub packages to retrieve the gem.  Do this by adding an entry to ~/.gem/credentials:
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```aiignore
+:github: Bearer <your_github_personal access_token>
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+2. Add the following to your application's Gemfile:
+
+```ruby
+group :development do
+  source "https://rubygems.pkg.github.com/strong-start" do
+    gem 'strongstart_release', '~> 0.1.0'
+  end
+end
 ```
+
+3. `bundle`
 
 ## Usage
+You build and deploy to staging or production from a development instance. With the recommended installation, the gem is not even installed in staging or production.
 
-TODO: Write usage instructions here
+### Example - build and deploy GRFS staging
 
-## Development
+1. Start a terminal session in a GRFS development instance, at the Rails root.
+2. `rails strongstart_release:build:staging`
+3. `rails strongstart_release:deploy:staging`
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/strongstart_release. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/strongstart_release/blob/dev/CODE_OF_CONDUCT.md).
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the StrongstartRelease project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/strongstart_release/blob/dev/CODE_OF_CONDUCT.md).
+Note that the gem determines the app - SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.

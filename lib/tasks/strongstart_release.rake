@@ -1,5 +1,5 @@
 namespace :strongstart_release do
-  desc "Log Hello World"
+  desc "Prints a \"Hello\" message to the console. Verifies that the gem is functional."
   task :ping => :environment do
     Rails.logger.info "Hello World!"
   end
@@ -27,8 +27,8 @@ namespace :strongstart_release do
   end
 
   namespace :aws do
-    desc "Verify that AWS credentials are available for build and deploy"
-    task :verify_auth => :environment do
+    desc "Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used."
+    task :verify => :environment do
       Rails.logger.info "Hello World from AWS!"
     end
   end
