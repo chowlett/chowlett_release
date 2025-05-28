@@ -8,3 +8,9 @@ gemspec
 gem "rake", "~> 13.0"
 
 gem "minitest", "~> 5.16"
+
+gem "ostruct"
+
+group :test do
+  gem "rails", "~> 8.0" # or your required version
+end
