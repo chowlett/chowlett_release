@@ -1,6 +1,6 @@
 # StrongstartRelease
 
-A private ruby gem that adds the following rake tasks to a Strong Start web application - SiTE SOURCE or GRFS:
+A private ruby gem that adds the following rake tasks to the development environment of a Strong Start web application - SiTE SOURCE or GRFS:
 
 | Task                                  | Description                                                                                                           |
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
@@ -40,4 +40,4 @@ You build and deploy to staging or production from a development instance. With 
 2. `rails strongstart_release:build:staging`
 3. `rails strongstart_release:deploy:staging`
 
-Note that the gem determines the app - SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
+Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
