@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module App
   def self.app_name
     app_name = Rails.application.class.module_parent&.name&.downcase
