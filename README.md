@@ -50,5 +50,8 @@ Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the 
 
 "<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at the "read:packages" and "write:packages" scopes. Normally you will be using the same token that you used to configure the bundler (see above).
 
-2. Make your changes to the code.
+2. Make your changes to the code. Include updating the gem version number, in lib/strongstart_release/version.rb.
+
 3. `./build-and-publish`
+
+4. Commit the change to Gemfile.lock that results from the build and publish.
