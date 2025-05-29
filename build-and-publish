@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+# Build this gem and publish it to Strong Start's GitHub Packages repository.
+# # Requires that a personal access token be configured in ~/.gem/credentials. The token
+# # must be "classic" (not fine-grained) and must have the 'read:packages' and `write:packages`
+# scopes.
+# This script is aware of the version number. It automatically publishes the version that it builds.
+# However, it does not "garbage collect" old versions either locally or from GitHub packages,
+# so you may want to delete old versions manually from time to time. Local copies of gem
+# files are not checked in to GitHub. so there's that.
+
+require_relative 'lib/strongstart_release/version'
+
+gemfile = "strongstart_release-#{StrongstartRelease::VERSION}.gem"
+puts "Building #{gemfile}"
+build_cmd = "gem build"
+
+unless system(build_cmd)
+    puts "Failed to build gem. Fatal."
+    exit 1
+end
+
+puts "Publishing #{gemfile} to GitHub Packages"
+publish_cmd = "gem push --key github --host https://rubygems.pkg.github.com/strong-start #{gemfile}"
+if system(publish_cmd)
+    puts "Successfully published #{gemfile} to GitHub Packages."
+else
+    puts "Failed to push gem to GitHub Packages."
+    exit 1
+end

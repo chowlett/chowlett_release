@@ -15,7 +15,7 @@ A private ruby gem that adds the following rake tasks to the development environ
 ```bash
     bundle config set --global https://rubygems.pkg.github.com/strong-start username:<your_github_personal access_token>
 ```
-"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
+"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 
 2. Add the following to your application's Gemfile:
 
@@ -42,10 +42,13 @@ Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the 
 
 ## Development
 
-Configure the gem command so you can publish to GitHub Packages, by adding an entry to ~/.gem/credentials:
+1. Configure the gem command so you can publish to GitHub Packages, by adding an entry to ~/.gem/credentials:
 
 ```aiignore
 :github: Bearer <your_github_personal access_token>
 ```
 
-"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" and must have at the "read:packages" and "write:packages" scopes. Normally you will be using the same token that you used to configure the bundler (see above).
+"<your_github_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at the "read:packages" and "write:packages" scopes. Normally you will be using the same token that you used to configure the bundler (see above).
+
+2. Make your changes to the code.
+3. `./build-and-publish`
