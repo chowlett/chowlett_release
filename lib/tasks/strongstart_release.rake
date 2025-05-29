@@ -20,7 +20,7 @@ namespace :strongstart_release do
 
   namespace :deploy do
     desc "Deploy the staging release of the most recent build for the including app (SiTE SOURCES or GRFS)"
-    task :staging, [version_tag] => :environment do |_, args|
+    task :staging, [:version_tag] => :environment do |_, args|
       require_relative './support/deploy/executor'
 
       deployer = Deploy::Executor.new(environment: :staging, version_tag: args[:version_tag])
@@ -30,10 +30,10 @@ namespace :strongstart_release do
     end
 
     desc "Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)"
-    task :production, [version_tag] => :environment do |_, args|
+    task :production, [:version_tag] => :environment do |_, args|
       require_relative './support/deploy/executor'
 
-      deployer = Deploy::Executor.new(environment: :production)
+      deployer = Deploy::Executor.new(environment: :production, version_tag: args[:version_tag])
       deployer.execute
     rescue StandardError => e
       puts "Error deploying the app: #{e.message}"
