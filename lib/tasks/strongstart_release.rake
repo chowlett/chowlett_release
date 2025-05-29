@@ -1,7 +1,9 @@
 namespace :strongstart_release do
   desc "Prints a \"Hello\" message to the console. Verifies that the gem is functional."
   task :ping => :environment do
-    Rails.logger.info "Hello World!"
+    require_relative './support/ping'
+
+    Ping.ping
   end
 
   namespace :build do
@@ -22,14 +24,16 @@ namespace :strongstart_release do
     end
     desc "Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)"
     task :production => :environment do
-      Rails.logger.info "Building whatever production"
+      puts "Building whatever production"
     end
   end
 
   namespace :aws do
     desc "Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used."
     task :verify => :environment do
-      Rails.logger.info "Hello World from AWS!"
+      require_relative './support/aws/verify'
+
+      Aws::Verify.verify
     end
   end
 end

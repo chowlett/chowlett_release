@@ -9,6 +9,8 @@ gem "rake", "~> 13.0"
 
 gem "minitest", "~> 5.16"
 
+gem 'aws-sdk-sts'
+
 gem "ostruct"
 
 group :test do
