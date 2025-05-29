@@ -6,8 +6,7 @@ A private ruby gem that adds the following rake tasks to the development environ
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | strong_start_release:echo             | Prints a "Hello" message to the console. Verifies that the gem is functional.                                         |
 | strong_start_release:aws:verify       | Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used. |
-| strongstart_release:build:staging     | Build the staging release for the including app (SiTE SOURCE or GRFS)                                                 |                                                |
-| strongstart_release:build:production  | Build the production release for the including app (SiTE SOURCE or GRFS)                                              |                                          |
+| strongstart_release:build     | Build a release for the including app (SiTE SOURCE or GRFS)                                                           |                                                |
 | strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                |                                                |
 | strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS)                                             |                                          |
 ## Installation
@@ -32,10 +31,10 @@ end
 ## Usage
 You build and deploy to staging or production from a development instance. With the recommended installation, the gem is not even installed in staging or production.
 
-### Example - build and deploy GRFS staging
+### Example - build and deploy GRFS to staging
 
 1. Start a terminal session in a GRFS development instance, at the Rails root.
-2. `rails strongstart_release:build:staging`
+2. `rails strongstart_release:build`
 3. `rails strongstart_release:deploy:staging`
 
 Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
