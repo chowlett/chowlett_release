@@ -8,15 +8,13 @@ module Aws
 
       begin
         puts "Region: #{client&.config&.region}"
+        puts "Account: #{resp&.account}"
+        puts "UserId: #{resp&.user_id}"
+        puts "ARN: #{resp&.arn}"
+        puts "Inspect the above values for reasonableness."
       rescue StandardError => e
-        puts "Error retrieving AWS region: #{e.message}"
+        puts "Error verifying AWS credentials: #{e.message}"
       end
-
-      puts "Account: #{resp.account}"
-      puts "UserId: #{resp.user_id}"
-      puts "ARN: #{resp.arn}"
-    rescue StandardError => e
-      puts "Error verifying AWS credentials: #{e.message}"
     end
   end
 end
