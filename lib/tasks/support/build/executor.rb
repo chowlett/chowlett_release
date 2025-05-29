@@ -1,4 +1,4 @@
-Require_relative '../app'
+require_relative '../app'
 
 module Build
   class Executor
