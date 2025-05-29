@@ -78,7 +78,7 @@ module Build
 
     def docker_build
       cmds = [
-        "docker buildx build -t #{ECR_REGISTRY}/#{app}:#{branch_version} --platform linux/arm64 --push ."
+        "docker buildx build -t #{ECR_REGISTRY}/#{app_name}:#{branch_version} --platform linux/arm64 --push ."
       ]
 
       cmds.each do |cmd|
