@@ -8,33 +8,33 @@ namespace :strongstart_release do
     puts "Error pinging the gem: #{e.message}"
   end
 
-  namespace :build do
-    desc "Build the staging release for the including app (SiTE SOURCES or GRFS)"
-    task :staging => :environment do
-      Rails.logger.info "Building whatever staging"
-    rescue StandardError => e
-      puts "Error building the app: #{e.message}"
-    end
+    desc "Build the release for the including app (SiTE SOURCES or GRFS)"
+    task :build => :environment do
+      require_relative './support/build/executor'
 
-    desc "Build the production release for the including app (SiTE SOURCES or GRFS)"
-    task :production => :environment do
-      Rails.logger.info "Building whatever production"
+      builder = Build::Executor.new
+      builder.execute
     rescue StandardError => e
       puts "Error building the app: #{e.message}"
     end
-  end
 
   namespace :deploy do
     desc "Deploy the staging release of the most recent build for the including app (SiTE SOURCES or GRFS)"
     task :staging => :environment do
-      Rails.logger.info "Building whatever staging"
+      require_relative './support/deploy/executor'
+
+      deployer = Deploy::Executor.new(environment: :staging)
+      deployer.execute
     rescue StandardError => e
       puts "Error deploying the app: #{e.message}"
     end
 
     desc "Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)"
     task :production => :environment do
-      puts "Building whatever production"
+      require_relative './support/deploy/executor'
+
+      deployer = Deploy::Executor.new(environment: :production)
+      deployer.execute
     rescue StandardError => e
       puts "Error deploying the app: #{e.message}"
     end
