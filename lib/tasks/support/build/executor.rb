@@ -21,15 +21,16 @@ module Build
 
     def tests
       unless run_tests_please
-        puts "Skipping tests as requested."
+        puts "Skipping all of the tests because you have opted not to run them."
         return
       end
 
+      puts "Running tests for #{app_name}..."
       system("bundle exec rake test")
       exit_code = $?.exitstatus
-      puts "exit code from tests: #{exit_code}"
-
       raise "Test run failed with exit code #{exit_code}" unless exit_code.zero?
+
+      puts "Tests passed"
     end
   end
 end
