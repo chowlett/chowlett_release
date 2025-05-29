@@ -8,6 +8,7 @@ module Build
     VERSION_FILE_PATH = Rails.root.join('docker-build', 'version.json').to_s
     ECR_REGISTRY = '938158173016.dkr.ecr.ca-central-1.amazonaws.com'
 
+    attr_accessor :run_tests_please
     attr_accessor :appBrandName
     attr_accessor :app_name
     attr_accessor :branch
