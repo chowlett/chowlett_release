@@ -9,7 +9,7 @@ namespace :strongstart_release do
   end
 
     desc "Build the release for the including app (SiTE SOURCES or GRFS)"
-    task :build, [:skip_tests] => :environment do
+    task :build, [:skip_tests] => :environment do |_, args|
       require_relative './support/build/executor'
 
       builder = Build::Executor.new(run_tests_please: args[:skip_tests] != 'skip_tests')
