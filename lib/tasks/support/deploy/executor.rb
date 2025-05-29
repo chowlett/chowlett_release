@@ -21,7 +21,7 @@ module Deploy
 
     def announce_start
       if version_tag
-        puts "Deploying #{app_name} to #{environment} with version tag: #{version_tag}"
+        puts "Deploying #{app_name} build #{version_tag} to #{environment}"
       else
         puts "Deploying most recent build of #{app_name} to #{environment}"
       end
