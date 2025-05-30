@@ -38,7 +38,7 @@ module Build
     end
 
     def initialize(run_tests_please: true)
-      self.app_name =App.app_name
+      self.app_name = App.app_name
       self.run_tests_please = run_tests_please
       self.appBrandName = app_name == 'sitesource' ? 'SiTE SOURCE' : 'GRFS'
     end
@@ -78,7 +78,13 @@ module Build
 
     def docker_build
       cmds = [
-        "docker buildx build -t #{ECR_REGISTRY}/#{app_name}:#{branch_version} --platform linux/arm64 --push ."
+        'DOCKER_BUILDKIT=1' \
+          ' docker buildx build' \
+          " --secret id=bundle_config,src=#{ENV['HOME']}/.bundle/config"\
+          " -t #{ECR_REGISTRY}/#{app_name}:#{branch_version}" \
+          ' --platform linux/arm64' \
+          ' --push' \
+          ' .'
       ]
 
       cmds.each do |cmd|
