@@ -2,11 +2,17 @@ require 'aws-sdk-ecs'
 require 'aws-sdk-ecr'
 
 module Deploy
-  class TaskImageUpdater
+  # Register a new task definition for the ECS task family associated with the given app and environment.
+  # The new task definition will have the same container definitions as the current one, except for
+  # the image tag, and a couple of deployment-specific environment variables.
+  # If no image tag is provided, the most recent tag from the associated ECR repository will be used. This is
+  # the most common use case and typically immediately follows a build. The use case for providing an image tag
+  # is "revert to a specific earlier version".
+  class EcsTaskRegistrar
     attr_accessor :app_name, :environment, :new_image_tag, :ecr_client, :ecs_client
 
-    def update
-      task_definition = get_task_definition
+    def register
+      task_definition = family_task_definition
 
       if self.new_image_tag.nil?
         self.new_image_tag = find_most_recent_tag(task_definition)
@@ -16,7 +22,7 @@ module Deploy
 
       puts "Current task revision: #{task_definition[:revision]}"
 
-      new_task_arn = update_task_definition(task_definition)
+      new_task_arn = register_task_definition(task_definition)
 
       puts("Task #{new_task_arn} has been registered with image tag #{new_image_tag}")
     end
@@ -35,7 +41,9 @@ module Deploy
       "#{app_name}-#{environment}"
     end
 
-    def get_task_definition
+    # Return the latest active task definition for a task family. A "family" is defined by the app name and environment.
+    # For example, sitesource-staging.
+    def family_task_definition
       begin
         resp = ecs_client.describe_task_definition(
           {
@@ -49,6 +57,8 @@ module Deploy
       resp.task_definition
     end
 
+    # Find the most recent tag for the image in the ECR repository associated with the task definition.
+    # "most recent" is defined as the most recently pushed image.
     def find_most_recent_tag(task_definition)
       repository_name = repository_name_from_task(task_definition)
 
@@ -84,6 +94,9 @@ module Deploy
 
       most_recent_tag = image_tags.first
 
+      # There may be multiple tags for the same image. This can happen if an app is built two times in succession with
+      # no intervening code change. In this case, we will see one image with two version number tags, e.g. 25.1.9 and
+      # 25.1.10. We resolve this by using the tag most recently pushed. In our example, this would be 25.1.10.
       if image_tags.length > 1
         puts("Warning. More than one specific tag found for image: #{JSON.pretty_generate(image.to_h)}. Using #{most_recent_tag}.")
       end
@@ -93,6 +106,8 @@ module Deploy
 
     def repository_name_from_task(task_definition)
       image = task_definition[:container_definitions].first[:image]
+      # Match the text after the last / and exclude the tag.
+      # Example - 123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo:latest, the match group will be my-repo.
       m = /([^\/]+?)(?::[\S]+)?$/.match(image)
 
       raise "Unable to parse task definition image: #{image}" if m.nil?
@@ -100,6 +115,8 @@ module Deploy
       m[1]
     end
 
+    # Update the container definitions in the task definition with the new image tag.
+    # BTW, there is only one container definition in our cases.
     def update_container_definitions(container_definitions)
       container_definition = container_definitions[0]
       update_container_environment(container_definition)
@@ -108,12 +125,14 @@ module Deploy
       container_definitions
     end
 
+    # Update the deployment-specific environment variables in the container definition.
     def update_container_environment(container_definition)
       environment = container_definition['environment']
       update_environment_setting(environment, name: 'APP_VERSION', value: new_image_tag)
       update_environment_setting(environment, name: 'DEPLOYED_AT', value: Time.now.strftime('%FT%T%:z'))
     end
 
+    # A helper method that updates an environment variable in the container definition.
     def update_environment_setting(environment, name:, value:)
       entry = environment.find { |e| e.name == name }
       if entry.nil?
@@ -124,7 +143,9 @@ module Deploy
       end
     end
 
-    def update_task_definition(task_definition)
+    # Register the new task definition. It will be the same as the current one, except for the image tag and
+    # a couple of deployment-specific container environment variables.
+    def register_task_definition(task_definition)
       container_definitions = task_definition[:container_definitions]
 
       raise "Error. Task definition has no container definitions." if container_definitions.empty?

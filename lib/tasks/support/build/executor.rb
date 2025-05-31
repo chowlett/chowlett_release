@@ -31,10 +31,6 @@ module Build
 
       elapsed_time = Time.now - start_time
       puts "Completed building #{appBrandName} image #{branch_version}, elapsed #{'%.1f' % elapsed_time} secs."
-
-    rescue StandardError => e
-      puts "Error during build: #{e.message}"
-      puts 'Build aborted.'
     end
 
     def initialize(run_tests_please: true)

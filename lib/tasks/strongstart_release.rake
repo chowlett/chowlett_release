@@ -15,7 +15,7 @@ namespace :strongstart_release do
       builder = Build::Executor.new(run_tests_please: args[:no_tests] != 'no_tests')
       builder.execute
     rescue StandardError => e
-      puts "Error building the app: #{e.message}"
+      puts "Error building the app: #{e.inspect}"
     end
 
   namespace :deploy do
@@ -26,7 +26,7 @@ namespace :strongstart_release do
       deployer = Deploy::Executor.new(environment: :staging, version_tag: args[:version_tag])
       deployer.execute
     rescue StandardError => e
-      puts "Error deploying the app: #{e.message}"
+      puts "Error deploying the app: #{e.inspect}"
     end
 
     desc "Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)"
@@ -36,7 +36,7 @@ namespace :strongstart_release do
       deployer = Deploy::Executor.new(environment: :production, version_tag: args[:version_tag])
       deployer.execute
     rescue StandardError => e
-      puts "Error deploying the app: #{e.message}"
+      puts "Error deploying the app: #{e.inspect}"
     end
   end
 
@@ -47,7 +47,7 @@ namespace :strongstart_release do
 
       Aws::Verify.verify
     rescue StandardError => e
-      puts "Error verifying AWS credentials: #{e.message}"
+      puts "Error verifying AWS credentials: #{e.inspect}"
     end
   end
 end

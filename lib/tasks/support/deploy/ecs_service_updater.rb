@@ -1,6 +1,8 @@
 require 'aws-sdk-ecs'
 
 module Deploy
+  # Update the ECS service for the given app and environment. Typically done after a new task definition has been
+  # registered. Updating the service restarts it with the new task definition.
   class EcsServiceUpdater
     attr_accessor :app_name, :environment, :service_name, :ecs_client
 
