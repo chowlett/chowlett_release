@@ -15,6 +15,10 @@ gem 'aws-sdk-sts'
 
 gem "ostruct"
 
+group :development, :test do
+  gem 'rubocop'
+end
+
 group :test do
   gem "rails", "~> 8.0" # or your required version
 end
