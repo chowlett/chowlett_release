@@ -7,7 +7,7 @@ module Aws
       resp = client.get_caller_identity
 
       begin
-        puts "Region: #{client&.config&.region}"
+        puts "Region: #{client.config&.region}"
         puts "Account: #{resp&.account}"
         puts "UserId: #{resp&.user_id}"
         puts "ARN: #{resp&.arn}"

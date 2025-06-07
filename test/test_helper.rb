@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-require "strongstart_release"
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
-require "minitest/autorun"
+require 'strongstart_release'
+
+require 'minitest/autorun'

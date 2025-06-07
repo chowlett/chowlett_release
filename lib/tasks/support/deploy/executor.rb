@@ -1,6 +1,7 @@
 require_relative '../app'
 
 module Deploy
+  # Run the deployment
   class Executor
     attr_accessor :app_name, :environment, :version_tag
 
@@ -8,13 +9,15 @@ module Deploy
       announce_start
       register_task_definition
       update_ecs_service
-    rescue StandardError => e
-      puts "Error during deployment: #{e.inspect}"
+    rescue StandardError
+      raise Error, 'Error during deployment'
     end
 
-    def initialize( environment:, version_tag: nil )
-      raise ArgumentError, "environment must be provided" if environment.nil? || environment.empty?
-      raise ArgumentError, "environment must be one of :staging or :production" unless %i[staging production].include?(environment.downcase)
+    def initialize(environment:, version_tag: nil)
+      raise ArgumentError, 'environment must be provided' if environment.nil? || environment.empty?
+      unless %i[staging production].include?(environment.downcase)
+        raise ArgumentError, 'environment must be one of :staging or :production'
+      end
 
       self.app_name = App.app_name
       self.environment = environment

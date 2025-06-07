@@ -13,14 +13,15 @@ module Deploy
 
       puts "Processing service #{service_name}"
 
-      service = get_service
+      service = service_to_update
 
       update_result = update_service(service)
 
       if update_result[:no_newer_revision]
         puts "Restarted #{update_result[:latest_task_definition_arn]}"
       else
-        puts "Replaced #{update_result[:running_task_definition_arn]} with #{update_result[:latest_task_definition_arn]}"
+        puts "Replaced #{update_result[:running_task_definition_arn]} with" \
+               " #{update_result[:latest_task_definition_arn]}"
       end
     end
 
@@ -36,12 +37,13 @@ module Deploy
       "#{app_name}-#{environment}"
     end
 
-    def get_service
+    def service_to_update
+      params = {
+        cluster: cluster_name,
+        services: [service_name]
+      }
+
       begin
-        params = {
-          cluster: cluster_name,
-          services: [service_name]
-        }
         resp = ecs_client.describe_services(params)
       rescue StandardError => e
         puts "Fatal error in describe_services: #{e}"
@@ -58,11 +60,11 @@ module Deploy
 
     def get_latest_task_definition_arn(running_task_definition_arn)
       task_family = family_from_task_definition(running_task_definition_arn)
+      params = {
+        task_definition: task_family,
+      }
 
       begin
-        params = {
-          task_definition: task_family,
-        }
         resp = ecs_client.describe_task_definition(params)
       rescue StandardError => e
         puts "Fatal error in describe_task_definition: #{e}"
@@ -79,12 +81,13 @@ module Deploy
       m[1]
     end
 
+    # Set the name of the service that runs in the cluster. The cluster must only have one service
+    # so ECS list_services should only return one service ARN.
     def set_service
+      params = {
+        cluster: cluster_name
+      }
       begin
-        params = {
-          cluster: cluster_name
-
-        }
         resp = ecs_client.list_services(params)
       rescue StandardError => e
         puts "Fatal error in list_services: #{e}"
@@ -117,7 +120,7 @@ module Deploy
         task_definition: latest_task_definition_arn
       }
 
-      params[:force_new_deployment] = true if no_newer_revision
+      params[:force_new_deployment] = 'true' if no_newer_revision
 
       begin
         ecs_client.update_service(params)

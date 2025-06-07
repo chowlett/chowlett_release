@@ -1,3 +1,5 @@
+require_relative './support/error_chains'
+
 namespace :strongstart_release do
   desc 'Prints a "Hello" message to the console. Verifies that the gem is functional.'
   task ping: :environment do
@@ -5,7 +7,7 @@ namespace :strongstart_release do
 
     Ping.ping
   rescue StandardError => e
-    puts "Error pinging the gem: #{e.message}"
+    ErrorChains.puts_error_chain e
   end
 
   desc 'Build the release for the including app (SiTE SOURCES or GRFS)'
@@ -15,7 +17,7 @@ namespace :strongstart_release do
     builder = Build::Executor.new(run_tests_please: args[:no_tests] != 'no_tests')
     builder.execute
   rescue StandardError => e
-    puts "Error building the app: #{e.inspect}"
+    ErrorChains.puts_error_chain e
   end
 
   namespace :deploy do
@@ -26,7 +28,7 @@ namespace :strongstart_release do
       deployer = Deploy::Executor.new(environment: :staging, version_tag: args[:version_tag])
       deployer.execute
     rescue StandardError => e
-      puts "Error deploying the app: #{e.inspect}"
+      ErrorChains.puts_error_chain e
     end
 
     desc 'Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)'
@@ -36,7 +38,7 @@ namespace :strongstart_release do
       deployer = Deploy::Executor.new(environment: :production, version_tag: args[:version_tag])
       deployer.execute
     rescue StandardError => e
-      puts "Error deploying the app: #{e.inspect}"
+      ErrorChains.puts_error_chain e
     end
   end
 
@@ -48,7 +50,7 @@ namespace :strongstart_release do
 
       Aws::Verify.verify
     rescue StandardError => e
-      puts "Error verifying AWS credentials: #{e.inspect}"
+      ErrorChains.puts_error_chain e
     end
   end
 end

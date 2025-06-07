@@ -1,20 +1,19 @@
 require_relative '../app'
+require_relative './version_tag'
 require Rails.root.join('docker-build', 'version_tag').to_s
 require 'pathname'
 require 'open3'
+require 'English'
 
 module Build
+  # Run the application build.
   class Executor
     VERSION_FILE_PATH = Rails.root.join('docker-build', 'version.json').to_s
-    ECR_REGISTRY = '938158173016.dkr.ecr.ca-central-1.amazonaws.com'
+    ECR_REGISTRY = '938158173016.dkr.ecr.ca-central-1.amazonaws.com'.freeze
 
-    attr_accessor :run_tests_please
-    attr_accessor :appBrandName
-    attr_accessor :app_name
-    attr_accessor :branch
-    attr_accessor :version
+    attr_accessor :run_tests_please, :app_brand_name, :app_name, :branch, :version
 
-    def execute
+    def execute # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       start_time = Time.now
       puts "Building #{app_name}"
       tests
@@ -23,36 +22,44 @@ module Build
       change_to_context_dir
       prepare_branch
       prepare_version
-      puts "Building #{appBrandName} image #{branch_version}"
+      puts "Building #{app_brand_name} image #{branch_version}"
 
       docker_build
 
       save_version
 
       elapsed_time = Time.now - start_time
-      puts "Completed building #{appBrandName} image #{branch_version}, elapsed #{'%.1f' % elapsed_time} secs."
+      # puts format('Completed building %s image %s, elapsed %.1f secs.', app_brand_name, branch_version, elapsed_time)
+      puts format(
+        'Completed building %<app_brand_name>s image %<branch_version>s, elapsed %<elapsed_time>.1f secs.',
+        app_brand_name:,
+        branch_version:,
+        elapsed_time:
+      )
+    rescue Error => _e
+      raise Error, 'Error during build'
     end
 
     def initialize(run_tests_please: true)
       self.app_name = App.app_name
       self.run_tests_please = run_tests_please
-      self.appBrandName = app_name == 'sitesource' ? 'SiTE SOURCE' : 'GRFS'
+      self.app_brand_name = app_name == 'sitesource' ? 'SiTE SOURCE' : 'GRFS'
     end
 
     private
 
     def tests
       unless run_tests_please
-        puts "Skipping all of the tests because you have opted not to run them."
+        puts 'Skipping all of the tests because you have opted not to run them.'
         return
       end
 
       puts "Running tests for #{app_name}..."
-      system("bundle exec rake test")
-      exit_code = $?.exitstatus
-      raise "Test run failed with exit code #{exit_code}" unless exit_code.zero?
+      system('bundle exec rake test')
+      exit_code = $CHILD_STATUS&.exitstatus
+      raise "Test run failed with exit code #{exit_code}" unless exit_code&.zero?
 
-      puts "Tests passed"
+      puts 'Tests passed'
     end
 
     def change_to_context_dir
@@ -61,10 +68,9 @@ module Build
 
     def prepare_branch
       self.branch = `git branch --show-current`.strip
-      if branch.nil? || branch.length == 0
-        puts("Fatal. Unable to determine git branch.")
-        exit(8)
-      end
+      return unless branch.nil? || branch.empty?
+
+      raise 'Fatal. Unable to determine git branch.'
     end
 
     def prepare_version
@@ -76,7 +82,7 @@ module Build
       cmds = [
         'DOCKER_BUILDKIT=1' \
           ' docker buildx build' \
-          " --secret id=bundle_config,src=#{ENV['HOME']}/.bundle/config"\
+          " --secret id=bundle_config,src=#{ENV['HOME']}/.bundle/config" \
           " -t #{ECR_REGISTRY}/#{app_name}:#{branch_version}" \
           ' --platform linux/arm64' \
           ' --push' \
@@ -86,23 +92,20 @@ module Build
       cmds.each do |cmd|
         puts cmd
         output = `#{cmd}`
-        rc = $?.exitstatus
+        rc = $CHILD_STATUS&.exitstatus
 
         puts output
         puts "rc = #{rc}"
 
-        if rc != 0
-          puts 'Command failed, terminating'
-          exit 8
-        end
+        raise "Command failed with exit code #{rc}" unless rc&.zero?
       end
     end
 
-    def ecr_login
-      login_cmd = "aws ecr get-login-password | "\
+    def ecr_login # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      login_cmd = 'aws ecr get-login-password | ' \
         "docker login --username AWS --password-stdin #{ECR_REGISTRY}"
 
-      Open3.popen3(login_cmd) do |stdin, stdout, stderr, thread|
+      Open3.popen3(login_cmd) do |_stdin, stdout, stderr, thread|
         process_status = thread.value
         rc = process_status.exitstatus
         stdout_lines = stdout.readlines.join('')
