@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
+require 'rails'
+
 # Methods for displaying the "cause" chain of an error.
 # Usage:
-#   ErrorChains.puts_error_chain(e) or ErrorChains.log_error_chain(e)
-
-require 'rails'
+#   ErrorChains.puts_error_chain(error) or ErrorChains.log_error_chain(error)
 module ErrorChains
-  def self.puts_error_chain(e)
-    while e
-      puts e.inspect
-      e = e.cause
-      puts "Caused by:" if e
+  def self.puts_error_chain(error)
+    while error
+      puts error.inspect
+      error = error.cause
+      puts 'Caused by:' if error
     end
   end
 
-  def self.log_error_chain(e)
-    while e
-      Rails.logger.error e.inspect
-      e = e.cause
-      Rails.logger.error "Caused by:" if e
+  def self.log_error_chain(error)
+    while error
+      Rails.logger.error error.inspect
+      error = error.cause
+      Rails.logger.error 'Caused by:' if error
     end
   end
 end

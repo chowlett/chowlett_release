@@ -8,13 +8,13 @@ module Deploy
   # If no image tag is provided, the most recent tag from the associated ECR repository will be used. This is
   # the most common use case and typically immediately follows a build. The use case for providing an image tag
   # is "revert to a specific earlier version".
-  class EcsTaskRegistrar
+  class EcsTaskRegistrar # rubocop:disable Metrics/ClassLength
     attr_accessor :app_name, :environment, :new_image_tag, :ecr_client, :ecs_client
 
     def register
       task_definition = family_task_definition
 
-      if self.new_image_tag.nil?
+      if new_image_tag.nil?
         self.new_image_tag = find_most_recent_tag(task_definition)
 
         puts "Using most recent image tag: #{new_image_tag}"
@@ -47,8 +47,9 @@ module Deploy
       begin
         resp = ecs_client.describe_task_definition(
           {
-            task_definition: task_family,
-          })
+            task_definition: task_family
+          }
+        )
       rescue StandardError => e
         puts "Failure in describe_task_definition for task family '#{task_family}': #{e}"
         raise "Failure in describe_task_definition for task family '#{task_family}"
@@ -59,7 +60,7 @@ module Deploy
 
     # Find the most recent tag for the image in the ECR repository associated with the task definition.
     # "most recent" is defined as the most recently pushed image.
-    def find_most_recent_tag(task_definition)
+    def find_most_recent_tag(task_definition) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       repository_name = repository_name_from_task(task_definition)
 
       images = []
@@ -71,7 +72,7 @@ module Deploy
         )
         images += resp[:image_details].to_a
 
-        while resp.next_page? do
+        while resp.next_page? # FIXME: use a block with describe_images
           resp = resp.next_page
 
           images += resp[:image_details].to_a
@@ -98,7 +99,8 @@ module Deploy
       # no intervening code change. In this case, we will see one image with two version number tags, e.g. 25.1.9 and
       # 25.1.10. We resolve this by using the tag most recently pushed. In our example, this would be 25.1.10.
       if image_tags.length > 1
-        puts("Warning. More than one specific tag found for image: #{JSON.pretty_generate(image.to_h)}. Using #{most_recent_tag}.")
+        puts("Warning. More than one specific tag found for image: #{JSON.pretty_generate(image.to_h)}. " \
+               "Using #{most_recent_tag}.")
       end
 
       most_recent_tag
@@ -108,7 +110,7 @@ module Deploy
       image = task_definition[:container_definitions].first[:image]
       # Match the text after the last / and exclude the tag.
       # Example - 123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo:latest, the match group will be my-repo.
-      m = /([^\/]+?)(?::[\S]+)?$/.match(image)
+      m = %r{([^/]+?)(?::\S+)?$}.match(image)
 
       raise "Unable to parse task definition image: #{image}" if m.nil?
 
@@ -120,7 +122,7 @@ module Deploy
     def update_container_definitions(container_definitions)
       container_definition = container_definitions[0]
       update_container_environment(container_definition)
-      container_definition[:image].sub!(/:[^\/\:]+$/, ":#{new_image_tag}")
+      container_definition[:image].sub!(%r{:[^/:]+$}, ":#{new_image_tag}")
 
       container_definitions
     end
@@ -145,11 +147,11 @@ module Deploy
 
     # Register the new task definition. It will be the same as the current one, except for the image tag and
     # a couple of deployment-specific container environment variables.
-    def register_task_definition(task_definition)
+    def register_task_definition(task_definition) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       container_definitions = task_definition[:container_definitions]
 
-      raise "Error. Task definition has no container definitions." if container_definitions.empty?
-      raise "Error. Task definition has more than one container definition." if container_definitions.length > 1
+      raise 'Error. Task definition has no container definitions.' if container_definitions.empty?
+      raise 'Error. Task definition has more than one container definition.' if container_definitions.length > 1
 
       updated_container_definitions = update_container_definitions(container_definitions)
 
@@ -168,7 +170,7 @@ module Deploy
       rescue StandardError => e
         puts "Error in register_task_definition: #{e}"
         puts "Parameters: #{JSON.pretty_generate(params)}"
-        raise "Error in register_task_definition"
+        raise 'Error in register_task_definition'
       end
 
       # return the new arn

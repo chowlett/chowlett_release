@@ -1,3 +1,4 @@
+# A module provide Application attributes like app_name
 module App
   def self.app_name
     app_name = Rails.application.class.module_parent&.name&.downcase

@@ -3,7 +3,7 @@ require 'aws-sdk-ecs'
 module Deploy
   # Update the ECS service for the given app and environment. Typically done after a new task definition has been
   # registered. Updating the service restarts it with the new task definition.
-  class EcsServiceUpdater
+  class EcsServiceUpdater # rubocop:disable Metrics/ClassLength
     attr_accessor :app_name, :environment, :service_name, :ecs_client
 
     def update
@@ -37,7 +37,7 @@ module Deploy
       "#{app_name}-#{environment}"
     end
 
-    def service_to_update
+    def service_to_update # rubocop:disable Metrics/MethodLength
       params = {
         cluster: cluster_name,
         services: [service_name]
@@ -61,7 +61,7 @@ module Deploy
     def get_latest_task_definition_arn(running_task_definition_arn)
       task_family = family_from_task_definition(running_task_definition_arn)
       params = {
-        task_definition: task_family,
+        task_definition: task_family
       }
 
       begin
@@ -76,14 +76,14 @@ module Deploy
     end
 
     def family_from_task_definition(task_definition)
-      m = task_definition.match(/([^\/]+)(?:\:\d+)$/)
+      m = task_definition.match(%r{([^\\/]+):\d+$})
 
       m[1]
     end
 
     # Set the name of the service that runs in the cluster. The cluster must only have one service
     # so ECS list_services should only return one service ARN.
-    def set_service
+    def set_service # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
       params = {
         cluster: cluster_name
       }
@@ -102,14 +102,14 @@ module Deploy
         if service_arns.length > 1
 
       service_arn = service_arns.first
-      m = /([^\/]+)$/.match(service_arn)
+      m = %r{([^/]+)$}.match(service_arn)
 
       raise "Unable to parse service arn: #{service_arn}" if m.nil?
 
       self.service_name = m[1]
     end
 
-    def update_service(service)
+    def update_service(service) # rubocop:disable Metrics/MethodLength
       running_task_definition_arn = service[:task_definition]
       latest_task_definition_arn = get_latest_task_definition_arn(running_task_definition_arn)
       no_newer_revision = running_task_definition_arn == latest_task_definition_arn
