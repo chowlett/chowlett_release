@@ -6,7 +6,7 @@ A private ruby gem that adds the following rake tasks to the development environ
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | strong_start_release:echo             | Prints a "Hello" message to the console. Verifies that the gem is functional.                                         |
 | strong_start_release:aws:verify       | Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used. |
-| strongstart_release:build     | Build a release for the including app (SiTE SOURCE or GRFS)                                                           |
+| strongstart_release:build             | Build a release for the including app (SiTE SOURCE or GRFS)                                                           |
 | strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                |
 | strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS)                                             |
 
