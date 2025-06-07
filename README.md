@@ -17,7 +17,7 @@ A private ruby gem that adds the following rake tasks to the development environ
     bundle config set --global https://rubygems.pkg.github.com/strong-start username:<your_github_personal access_token>
 ```
 
-"<your_GitHub_personal access_token>" must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
+\<your_GitHub_personal access_token> must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 2. Add the following to your application's Gemfile:
 ```ruby
 group :development do
