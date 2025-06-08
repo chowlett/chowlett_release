@@ -1,4 +1,5 @@
 require_relative './support/error_chains'
+require_relative './support/release_task_utils'
 
 namespace :strongstart_release do
   desc 'Test multiple flags'
@@ -48,6 +49,10 @@ namespace :strongstart_release do
     desc 'Deploy the staging release of the most recent build for the including app (SiTE SOURCES or GRFS)'
     task :staging, [:version_tag] => :environment do |_, args|
       require_relative './support/deploy/executor'
+      
+      puts 'args: ', ReleaseTaskUtils.parse_deploy_args
+
+      raise 'Short-circuiting deploy task for testing purposes'
 
       deployer = Deploy::Executor.new(environment: :staging, version_tag: args[:version_tag])
       deployer.execute
@@ -58,6 +63,10 @@ namespace :strongstart_release do
     desc 'Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)'
     task :production, [:version_tag] => :environment do |_, args|
       require_relative './support/deploy/executor'
+
+      puts 'args: ', ReleaseTaskUtils.parse_deploy_args
+
+      raise 'Short-circuiting deploy task for testing purposes'
 
       deployer = Deploy::Executor.new(environment: :production, version_tag: args[:version_tag])
       deployer.execute
