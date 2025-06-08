@@ -24,10 +24,21 @@ namespace :strongstart_release do
   end
 
   desc 'Build the release for the including app (SiTE SOURCES or GRFS)'
-  task :build, [:no_tests] => :environment do |_, args|
+  task :build, %i[arg1 arg2] => :environment do |_, args|
     require_relative './support/build/executor'
 
-    builder = Build::Executor.new(run_tests_please: args[:no_tests] != 'no_tests')
+    flags = [args[:arg1], args[:arg2]].compact
+    unexpected_flags = flags - %w[--no-tests --dry-run]
+    unless unexpected_flags.empty?
+      puts "Unexpected arguments: #{unexpected_flags.join(', ')}"
+      puts 'Valid arguments are: --no-tests, --dry-run'
+      exit 1
+    end
+
+    no_tests = flags.include?('--no-tests')
+    dry_run  = flags.include?('--dry-run')
+
+    builder = Build::Executor.new(run_tests_please: !no_tests, dry_run_please: dry_run)
     builder.execute
   rescue StandardError => e
     ErrorChains.puts_error_chain e

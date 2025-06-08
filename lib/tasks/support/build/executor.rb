@@ -11,12 +11,18 @@ module Build
     VERSION_FILE_PATH = Rails.root.join('docker-build', 'version.json').to_s
     ECR_REGISTRY = '938158173016.dkr.ecr.ca-central-1.amazonaws.com'.freeze
 
-    attr_accessor :run_tests_please, :app_brand_name, :app_name, :branch, :version
+    attr_accessor :run_tests_please, :dry_run_please, :app_brand_name, :app_name, :branch, :version
 
     def execute # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       start_time = Time.now
       puts "Building #{app_name}"
-      tests
+      puts 'Dry run' if dry_run_please
+
+      if run_tests_please
+        tests
+      else
+        puts 'Skipping tests per your request.'
+      end
 
       ecr_login
       change_to_context_dir
@@ -26,7 +32,7 @@ module Build
 
       docker_build
 
-      save_version
+      save_version unless dry_run_please
 
       elapsed_time = Time.now - start_time
       # puts format('Completed building %s image %s, elapsed %.1f secs.', app_brand_name, branch_version, elapsed_time)
@@ -36,24 +42,20 @@ module Build
         branch_version:,
         elapsed_time:
       )
-    rescue Error => _e
+    rescue
       raise Error, 'Error during build'
     end
 
-    def initialize(run_tests_please: true)
+    def initialize(run_tests_please: true, dry_run_please: false)
       self.app_name = App.app_name
       self.run_tests_please = run_tests_please
+      self.dry_run_please = dry_run_please
       self.app_brand_name = app_name == 'sitesource' ? 'SiTE SOURCE' : 'GRFS'
     end
 
     private
 
     def tests
-      unless run_tests_please
-        puts 'Skipping all of the tests because you have opted not to run them.'
-        return
-      end
-
       puts "Running tests for #{app_name}..."
       system('bundle exec rake test')
       exit_code = $CHILD_STATUS&.exitstatus
@@ -78,27 +80,31 @@ module Build
       version.inc
     end
 
-    def docker_build
-      cmds = [
-        'DOCKER_BUILDKIT=1' \
-          ' docker buildx build' \
-          " --secret id=bundle_config,src=#{ENV['HOME']}/.bundle/config" \
-          " -t #{ECR_REGISTRY}/#{app_name}:#{branch_version}" \
-          ' --platform linux/arm64' \
-          ' --push' \
-          ' .'
+    def docker_build_command
+      cmd_parts = [
+        'DOCKER_BUILDKIT=1',
+        'docker buildx build',
+        "--secret id=bundle_config,src=#{ENV['HOME']}/.bundle/config",
+        '-t ',
+        "#{ECR_REGISTRY}/#{app_name}:#{branch_version}",
+        '--platform linux/arm64'
       ]
+      cmd_parts << '--push' unless dry_run_please
+      cmd_parts << '.'
 
-      cmds.each do |cmd|
-        puts cmd
-        output = `#{cmd}`
-        rc = $CHILD_STATUS&.exitstatus
+      cmd_parts.join(' ')
+    end
 
-        puts output
-        puts "rc = #{rc}"
+    def docker_build
+      cmd = docker_build_command
+      puts "Docker build command: #{cmd}" if dry_run_please
+      output = `#{cmd}`
+      rc = $CHILD_STATUS&.exitstatus
 
-        raise "Command failed with exit code #{rc}" unless rc&.zero?
-      end
+      puts output
+      puts "rc = #{rc}"
+
+      raise "Docker build command failed with exit code #{rc}" unless rc&.zero?
     end
 
     def ecr_login # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
