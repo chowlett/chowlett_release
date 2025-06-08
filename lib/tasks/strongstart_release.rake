@@ -6,7 +6,7 @@ namespace :strongstart_release do
     flags = [args[:arg1], args[:arg2]].compact
     no_tests = flags.include?('--no-tests')
     dry_run  = flags.include?('--dry-run')
-    unexpected_flags = flags - ['--no-tests', '--dry-run']
+    unexpected_flags = flags - %w[--no-tests --dry-run]
 
     puts "Flags received: #{flags.join(', ')}"
     puts "Unexpected flags: #{unexpected_flags}" if unexpected_flags.any?
