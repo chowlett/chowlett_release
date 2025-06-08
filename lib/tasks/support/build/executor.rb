@@ -36,14 +36,14 @@ module Build
 
       elapsed_time = Time.now - start_time
       puts format(
-             'Completed building %<app_brand_name>s image %<branch_version>s, elapsed %<elapsed_time>.1f secs.',
-             app_brand_name:,
-             branch_version:,
-             elapsed_time:
-           )
+        'Completed building %<app_brand_name>s image %<branch_version>s, elapsed %<elapsed_time>.1f secs.',
+        app_brand_name:,
+        branch_version:,
+        elapsed_time:
+      )
       puts 'Image built locally but not pushed to ECR because you specified --dry-run.' if dry_run_please
     rescue StandardError
-      raise Error # Build::Error provides an error message. Error details are in the cause.
+      raise Build::Error # Build::Error provides an error message. Error details are in the cause.
     end
 
     def initialize(run_tests_please: true, dry_run_please: false)
