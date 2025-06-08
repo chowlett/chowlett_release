@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    strongstart_release (0.1.25)
+    strongstart_release (0.1.26)
 
 GEM
   remote: https://rubygems.org/
