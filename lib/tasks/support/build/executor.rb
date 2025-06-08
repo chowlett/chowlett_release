@@ -102,14 +102,20 @@ module Build
       output = `#{cmd}`
       rc = $CHILD_STATUS&.exitstatus
 
-      puts output
-      build_log_path = Rails.root.join('log', "build-#{branch_version}.log")
-      File.write(build_log_path, output)
+      process_docker_build_output output
 
       return if rc&.zero?
 
       puts "Exit code from docker build: #{rc}. Build log: #{build_log_path}"
       raise "Docker build command failed with exit code #{rc}"
+    end
+
+    def process_docker_build_output(output)
+      puts output
+      build_log_path = Rails.root.join('log', "build-#{branch_version}.log")
+      File.write(build_log_path, output)
+    rescue StandardError => e
+      puts "Error (non-fatal) writing build log: #{e.inspect}"
     end
 
     def ecr_login # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
