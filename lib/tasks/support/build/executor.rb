@@ -114,7 +114,7 @@ module Build
       puts output
       path = build_log_path
       FileUtils.mkdir_p(path.dirname)
-      File.write(path, output)
+      File.write(path.to_s, output)
     rescue StandardError => e
       puts "Error (non-fatal) writing build log: #{e.inspect}"
     end
