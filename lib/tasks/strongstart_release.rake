@@ -1,6 +1,17 @@
 require_relative './support/error_chains'
 
 namespace :strongstart_release do
+  desc 'Test multiple flags'
+  task :flag_test, %i[arg1 arg2] => :environment do |_, args|
+    flags = [args[:arg1], args[:arg2]].compact
+    no_tests = flags.include?('--no-tests')
+    dry_run  = flags.include?('--dry-run')
+
+    puts "Flags received: #{flags.join(', ')}"
+    puts "No tests: #{no_tests}"
+    puts "Dry run: #{dry_run}"
+  end
+
   desc 'Prints a "Hello" message to the console. Verifies that the gem is functional.'
   task ping: :environment do
     require_relative './support/ping'
