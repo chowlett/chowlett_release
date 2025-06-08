@@ -17,6 +17,8 @@ A private ruby gem that adds the following rake tasks to the development environ
     bundle config set --global https://rubygems.pkg.github.com/strong-start username:<your_github_personal access_token>
 ```
 
+This will update (creating, if necessary) your ~/.bundle/config file. There are other ways to pass the credentials to the bundler, such as using an environment variable, but this config file approach is required in order for the build docker container to have the credentials needed to access GitHub Packages (see Note 2 under Usage below).
+
 \<your_GitHub_personal access_token> must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 
 2. Add the following to your application's Gemfile:
@@ -38,7 +40,9 @@ You build and deploy to staging or production from a development instance. With 
 2. `rails strongstart_release:build`
 3. `rails strongstart_release:deploy:staging`
 
-Note that the gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
+**Notes**
+1. The gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
+2. The build task runs a docker build command that will bundle the app (SiTE SOURCE or GRFS) and requires credentials for GitHub packages, even though the staging/production app does not install strongstart_release in staging/production. According to chatGPT (!) this is because the bundler retrieves metadata for all sources named in the Gemfile, in order to resolve dependencies. In any case, credentials for GitHub Packages do seem to be needed. We provide them by transferring the ~/.bundle/config file securely from the development instance to the docker build container with "RUN --mount=type=secret ...".
 
 ## Development
 
