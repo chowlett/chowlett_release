@@ -1,4 +1,5 @@
 require_relative '../app'
+require_relative './error'
 
 module Deploy
   # Run the deployment
@@ -10,7 +11,7 @@ module Deploy
       register_task_definition
       update_ecs_service
     rescue StandardError
-      raise Error, 'Error during deployment'
+      raise Deploy::Error, 'Error during deployment'
     end
 
     def initialize(environment:, version_tag: nil)

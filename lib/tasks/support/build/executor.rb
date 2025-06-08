@@ -1,5 +1,6 @@
 require_relative '../app'
 require_relative './version_tag'
+require_relative './error'
 require Rails.root.join('docker-build', 'version_tag').to_s
 require 'pathname'
 require 'open3'
