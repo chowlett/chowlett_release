@@ -112,7 +112,9 @@ module Build
 
     def process_docker_build_output(output)
       puts output
-      build_log_path = Rails.root.join('log', "build-#{branch_version}.log")
+      build_log_folder = Rails.root.join('tmp', 'docker_build_logs')
+      FileUtils.mkdir_p(build_log_folder)
+      build_log_path = build_log_folder.join("build-#{branch_version}.log")
       File.write(build_log_path, output)
     rescue StandardError => e
       puts "Error (non-fatal) writing build log: #{e.inspect}"
