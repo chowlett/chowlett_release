@@ -2,13 +2,13 @@
 
 A private ruby gem that adds the following rake tasks to the development environment of a Strong Start web application - SiTE SOURCE or GRFS:
 
-| Task                                  | Description                                                                                                           |
-|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| strong_start_release:echo             | Prints a "Hello" message to the console. Verifies that the gem is functional.                                         |
-| strong_start_release:aws:verify       | Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used. |
-| strongstart_release:build             | Build a release for the including app (SiTE SOURCE or GRFS)                                                           |
-| strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                |
-| strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS)                                             |
+| Task                                  | Description                                                                                                                                                                                                             |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| strong_start_release:echo             | Prints a "Hello" message to the console. Verifies that the gem is functional.                                                                                                                                           |
+| strong_start_release:aws:verify       | Verify that AWS credentials are available for build and deploy. Returns information about the AWS account being used.                                                                                                   |
+| strongstart_release:build             | Build a release for the including app (SiTE SOURCE or GRFS). The image is the same for staging and production. Run-time behaviour is controlled by docker container environment variables configured during deployment. |
+| strongstart_release:deploy:staging    | Deploy the staging release for the including app (SiTE SOURCE or GRFS)                                                                                                                                                  |
+| strongstart_release:deploy:production | Deploy the production release for the including app (SiTE SOURCE or GRFS). Same docker image as the staging release, but different docker container. environment variables.                                             |
 
 ## Installation
 1. Provide credentials that will be used by bundler to access GitHub packages to retrieve the gem.  Do this by configuring the bundler as follows:
@@ -41,8 +41,9 @@ You build and deploy to staging or production from a development instance. With 
 3. `rails strongstart_release:deploy:staging`
 
 **Notes**
-1. The gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
-2. The build task runs a docker build command that will bundle the app (SiTE SOURCE or GRFS) and requires credentials for GitHub packages, even though the staging/production app does not install strongstart_release in staging/production. According to chatGPT (!) this is because the bundler retrieves metadata for all sources named in the Gemfile, in order to resolve dependencies. In any case, credentials for GitHub Packages do seem to be needed. We provide them by transferring the ~/.bundle/config file securely from the development instance to the docker build container with "RUN --mount=type=secret ...".
+1. How do the rake tasks know if we want SiTE SOURCE or GRFS? The gem determines the app, SiTE SOURCE or GRFS, dynamically from the Rails app's file tree, by reading config/application.rb.
+2. Why does the build task need ~/.bundle/config? The build task runs a docker build command that will bundle the app (SiTE SOURCE or GRFS) and requires credentials for GitHub packages, even though the Dockerfile bundling excludes strongstart_release in staging/production (in fact it excludes all gems named in the :development and/or :test groups). According to chatGPT (!) this is because the bundler retrieves metadata for all sources named in the Gemfile whether or not they will be bundled, in order to resolve dependencies. In any case, credentials for GitHub Packages do seem to be needed. We provide them by transferring the ~/.bundle/config file securely from the development instance to the docker build container with "RUN --mount=type=secret ...". 
+3. Why is the baroque-seeming "RUN --mount=type=secret ..." more secure than the simpler approach of COPYing it into the docker context?  This method prevents the file from being persisted in intermediate image layers and also avoids the risk of accidentally committing the credentials to the development project's git repository. The file is only present in the build container while the build is running, and it is not included in the final image. This is a best practice for handling sensitive information in Docker builds.
 
 ## Development
 
