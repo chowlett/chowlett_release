@@ -1,4 +1,4 @@
-# require 'aws-sdk-ecs'
+require 'aws-sdk-ecs'
 
 module Deploy
   # Update the ECS service for the given app and environment. Typically done after a new task definition has been
