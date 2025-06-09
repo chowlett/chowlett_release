@@ -1,5 +1,5 @@
-# require 'aws-sdk-ecs'
-# require 'aws-sdk-ecr'
+require 'aws-sdk-ecr'
+require 'aws-sdk-ecs'
 
 module Deploy
   # Register a new task definition for the ECS task family associated with the given app and environment.
