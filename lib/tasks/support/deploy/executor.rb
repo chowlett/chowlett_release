@@ -8,7 +8,6 @@ module Deploy
 
     def execute
       announce_start
-      raise 'Short-circuiting for debugging'
       register_task_definition
       update_ecs_service
     rescue StandardError
