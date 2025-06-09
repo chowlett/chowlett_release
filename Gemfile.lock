@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    strongstart_release (1.0.0)
+    strongstart_release (1.0.1)
       aws-sdk-ecr
       aws-sdk-ecs
       aws-sdk-sts
