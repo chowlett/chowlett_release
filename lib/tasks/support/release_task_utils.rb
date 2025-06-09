@@ -17,9 +17,9 @@ module ReleaseTaskUtils
     parsed
   end
 
-  def self.parse_deploy_args # rubocop:disable Metrics/MethodLength
+  def self.parse_deploy_args(args) # rubocop:disable Metrics/MethodLength
     parsed = {}.with_indifferent_access
-    ARGV.each do |arg|
+    args.each do |arg|
       case arg
       when '--dry-run'
         parsed[:dry_run] = true
