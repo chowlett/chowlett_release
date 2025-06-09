@@ -2,6 +2,9 @@ PATH
   remote: .
   specs:
     strongstart_release (0.1.41)
+      aws-sdk-ecr
+      aws-sdk-ecs
+      aws-sdk-sts
 
 GEM
   remote: https://rubygems.org/
