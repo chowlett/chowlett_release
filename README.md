@@ -27,7 +27,22 @@ This will update (creating, if necessary) your ~/.bundle/config file. There are 
 
 \<your_GitHub_personal access_token> must be the "classic" type of personal access token, not the modern "fine-grained" type (a GitHub Packages constraint). The token has the pattern /\Aghp_[a-zA-Z0-9]{36}\z/ and must have at least the "read:packages" scope. Normally you will be using a token that has both "read:packages" and "write:packages" scopes because you will also be developing the gem from time to time.
 
-2. Add the following to your application's Gemfile:
+2. Modify your Dockerfile as follows, so "docker build" enjoys the necessary GitHub Packages permissions:
+
+**Before:**
+```dockerfile
+run bundle update --bundler && BUNDLE_WITHOUT=development:test bundle install
+```
+
+** After**
+```dockerfile
+run --mount=type=secret,id=bundle_config \
+cp /run/secrets/bundle_config ~/.bundle/config && \
+bundle update --bundler && \
+BUNDLE_WITHOUT=development:test bundle install
+```
+
+3. Add the following to your application's Gemfile:
 ```ruby
 group :development do
   source "https://rubygems.pkg.github.com/strong-start" do
