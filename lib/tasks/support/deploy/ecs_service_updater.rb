@@ -1,4 +1,4 @@
-require 'aws-sdk-ecs'
+# require 'aws-sdk-ecs'
 
 module Deploy
   # Update the ECS service for the given app and environment. Typically done after a new task definition has been
@@ -6,7 +6,7 @@ module Deploy
   class EcsServiceUpdater # rubocop:disable Metrics/ClassLength
     attr_accessor :app_name, :environment, :service_name, :ecs_client, :dry_run
 
-    def update
+    def update # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
       puts "Processing cluster #{cluster_name}"
 
       set_service
@@ -16,7 +16,8 @@ module Deploy
       service = service_to_update
 
       if dry_run
-        puts "Dry run: skipping update of service #{service_name} in cluster #{cluster_name} with the latest task definition."
+        puts "Dry run: skipping update of service #{service_name} in cluster #{cluster_name}" \
+               ' with the latest task definition.'
         return
       end
 
@@ -115,7 +116,8 @@ module Deploy
       self.service_name = m[1]
     end
 
-    def update_service(service) # rubocop:disable Metrics/MethodLength
+    def update_service(service)
+      # rubocop:disable Metrics/MethodLength
       running_task_definition_arn = service[:task_definition]
       latest_task_definition_arn = get_latest_task_definition_arn(running_task_definition_arn)
       no_newer_revision = running_task_definition_arn == latest_task_definition_arn
