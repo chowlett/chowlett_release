@@ -31,7 +31,7 @@ This will update (creating, if necessary) your ~/.bundle/config file. There are 
 ```ruby
 group :development do
   source "https://rubygems.pkg.github.com/strong-start" do
-    gem 'strongstart_release', '~> 0.1.0'
+    gem 'strongstart_release', '~> 1.0.0'
   end
 end
 ```
