@@ -16,7 +16,7 @@ namespace :strongstart_release do
   task :build, [] => :environment do |_, task_args|
     require_relative './support/build/executor'
 
-    parsed = ReleaseTaskUtils.parse_deploy_args task_args.to_a
+    parsed = ReleaseTaskUtils.parse_build_args task_args.to_a
     run_tests_please = !parsed[:no_tests]
     dry_run_please = parsed[:dry_run]
 
