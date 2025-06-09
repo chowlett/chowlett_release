@@ -1,3 +1,3 @@
 module StrongstartRelease
-  VERSION = '0.1.43'.freeze
+  VERSION = '1.0.0'.freeze
 end
