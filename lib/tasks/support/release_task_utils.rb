@@ -7,14 +7,13 @@ module ReleaseTaskUtils
     args.each do |arg|
       case arg
       when '--no-tests'
-        parsed[:run_tests] = false
+        parsed[:no_tests] = true
       when '--dry-run'
         parsed[:dry_run] = true
       else
         raise ArgumentError, "Unknown argument:' #{arg}'. Valid arguments are: --no-tests, --dry-run'"
       end
     end
-    puts "args: #{parsed.inspect}"
     parsed
   end
 
