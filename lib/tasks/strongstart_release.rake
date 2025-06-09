@@ -50,11 +50,9 @@ namespace :strongstart_release do
     task :staging, [] => :environment do |_, task_args| # task_args is a Rake::TaskArguments with no keys
       require_relative './support/deploy/executor'
       
-      puts "args: #{ReleaseTaskUtils.parse_deploy_args(task_args.to_a)}"
+      parsed = ReleaseTaskUtils.parse_deploy_args task_args.to_a
 
-      raise 'Short-circuiting deploy task for testing purposes'
-
-      deployer = Deploy::Executor.new(environment: :staging, version_tag: args[:version_tag])
+      deployer = Deploy::Executor.new(environment: :staging, version_tag: parsed[:tag], dry_run: parsed[:dry_run])
       deployer.execute
     rescue StandardError => e
       ErrorChains.puts_error_chain e
@@ -64,11 +62,9 @@ namespace :strongstart_release do
     task :production, [] => :environment do |_, task_args| # task_args is a Rake::TaskArguments with no keys
       require_relative './support/deploy/executor'
 
-      puts "args: #{ReleaseTaskUtils.parse_deploy_args(task_args.to_a)}"
+      parsed = ReleaseTaskUtils.parse_deploy_args task_args.to_a
 
-      raise 'Short-circuiting deploy task for testing purposes'
-
-      deployer = Deploy::Executor.new(environment: :production, version_tag: args[:version_tag])
+      deployer = Deploy::Executor.new(environment: :production, version_tag: parsed[:tag], dry_run: parsed[:dry_run])
       deployer.execute
     rescue StandardError => e
       ErrorChains.puts_error_chain e

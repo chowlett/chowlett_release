@@ -4,7 +4,7 @@ module Deploy
   # Update the ECS service for the given app and environment. Typically done after a new task definition has been
   # registered. Updating the service restarts it with the new task definition.
   class EcsServiceUpdater # rubocop:disable Metrics/ClassLength
-    attr_accessor :app_name, :environment, :service_name, :ecs_client
+    attr_accessor :app_name, :environment, :service_name, :ecs_client, :dry_run
 
     def update
       puts "Processing cluster #{cluster_name}"
@@ -14,6 +14,11 @@ module Deploy
       puts "Processing service #{service_name}"
 
       service = service_to_update
+
+      if dry_run
+        puts "Dry run: skipping update of service #{service_name} in cluster #{cluster_name} with the latest task definition."
+        return
+      end
 
       update_result = update_service(service)
 
@@ -25,9 +30,10 @@ module Deploy
       end
     end
 
-    def initialize(app_name:, environment:)
+    def initialize(app_name:, environment:, dry_run: false)
       self.app_name = app_name
       self.environment = environment
+      self.dry_run = dry_run
       self.ecs_client = Aws::ECS::Client.new
     end
 

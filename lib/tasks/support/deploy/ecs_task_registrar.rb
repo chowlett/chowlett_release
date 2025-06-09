@@ -9,7 +9,7 @@ module Deploy
   # the most common use case and typically immediately follows a build. The use case for providing an image tag
   # is "revert to a specific earlier version".
   class EcsTaskRegistrar # rubocop:disable Metrics/ClassLength
-    attr_accessor :app_name, :environment, :new_image_tag, :ecr_client, :ecs_client
+    attr_accessor :app_name, :environment, :new_image_tag, :dry_run, :ecr_client, :ecs_client
 
     def register
       task_definition = family_task_definition
@@ -18,19 +18,27 @@ module Deploy
         self.new_image_tag = find_most_recent_tag(task_definition)
 
         puts "Using most recent image tag: #{new_image_tag}"
+      else
+        puts "Using provided image tag: #{new_image_tag}"
       end
 
       puts "Current task revision: #{task_definition[:revision]}"
+
+      if dry_run
+        puts 'Skipping registration of a new task definition because --dry-run.'
+        return
+      end
 
       new_task_arn = register_task_definition(task_definition)
 
       puts("Task #{new_task_arn} has been registered with image tag #{new_image_tag}")
     end
 
-    def initialize(app_name:, environment:, image_tag: nil)
+    def initialize(app_name:, environment:, image_tag: nil, dry_run: false)
       self.app_name = app_name
       self.environment = environment
       self.new_image_tag = image_tag
+      self.dry_run = dry_run
       self.ecr_client = Aws::ECR::Client.new
       self.ecs_client = Aws::ECS::Client.new
     end
