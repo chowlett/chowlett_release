@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'argument_error'
-
 # Utility methods for release tasks - build and deploy
 module ReleaseTaskUtils
   def self.parse_build_args # rubocop:disable Metrics/MethodLength
