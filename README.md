@@ -12,7 +12,7 @@ A private ruby gem that adds the following rake tasks to the development environ
 
 **Note**
 1. All arguments are optional. 
-2. The version tag is to revert to an "old" version. Historically, this the need for this has been very rare. The version_tag argument is recognized by the pattern used by convention in our apps - text that ends in the well-known three-level semantic versioning pattern.If no version_tag is provided, the latest version is used.
+2. The version tag is to revert to an "old" version. Historically, this the need for this has been very rare. The version_tag argument is recognized by the pattern used by convention in our apps - text that ends in the well-known three-level semantic versioning pattern. If no version_tag is provided, the latest version is used.
 3. If --dry-run is specified for build, the task will build the local docker image but will not push it to ECR. The task will not update the version in the repo but the version tag on the local docker image will be the version in the repo + 1. That is, it will be the version that would have been pushed without --dry-run.
 3. If --dry_run is specified for deploy, the task will not actually deploy, but will relevant print information about the cluster, service and ECS task.
 
@@ -36,6 +36,14 @@ group :development do
 end
 ```
 3. `bundle`
+
+###  File Dependencies
+The gem requires that three files be present in the consuming Rails app's file tree, in known locations:
+   - `Rails.root/docker-build/version.json` (read/write)
+   - `Rails.root/Dockerfile` (read)
+- `Rails.root/config/application.rb` (read) 
+
+We may make the locations of the first two above files configurable, in a future version of the gem.
 
 ## Usage
 You build and deploy to staging or production from a development instance. With the recommended installation, the gem is not even installed in staging or production.
