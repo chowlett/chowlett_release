@@ -1,4 +1,6 @@
 require_relative '../app'
+require_relative './ecs_task_registrar'
+require_relative './ecs_service_updater'
 require_relative './error'
 
 module Deploy
