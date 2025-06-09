@@ -25,11 +25,11 @@ module ReleaseTaskUtils
       case arg
       when '--dry-run'
         parsed[:dry_run] = true
-      when /\A.*\d+\.\d+\.\d+\z/.match?(arg)
+      when /\A.*\d+\.\d+\.\d+\z/
         parsed[:tag] = arg
       else
         raise ArgumentError, "Unknown argument: '#{arg}'. Valid arguments are:  '--dry-run'" \
-                              ", a version tag matching /\A.*\d+\.\d+\.\d+\z/"
+                              ', a version tag matching /\\A.*\\d+\\.\\d+\\.\\d+\\z/'
       end
     end
     parsed
