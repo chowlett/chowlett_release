@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'argument_error'
+
 # Utility methods for release tasks - build and deploy
 module ReleaseTaskUtils
   def self.parse_build_args # rubocop:disable Metrics/MethodLength
@@ -11,7 +13,7 @@ module ReleaseTaskUtils
       when '--dry-run'
         parsed[:dry_run] = true
       else
-        raise ArgumentError "Unknown argument:' #{arg}'. Valid arguments are: --no-tests, --dry-run'"
+        raise ArgumentError, "Unknown argument:' #{arg}'. Valid arguments are: --no-tests, --dry-run'"
       end
     end
     parsed
@@ -25,10 +27,10 @@ module ReleaseTaskUtils
       case arg
       when '--dry-run'
         parsed[:dry_run] = true
-      when /\A.*\d+\.\d+\.\d+\z/.match(arg)
+      when /\A.*\d+\.\d+\.\d+\z/.match?(arg)
         parsed[:tag] = arg
       else
-        raise ArgumentError "Unknown argument: '#{arg}'. Valid arguments are:  '--dry-run'" \
+        raise ArgumentError, "Unknown argument: '#{arg}'. Valid arguments are:  '--dry-run'" \
                               ", a version tag matching /\A.*\d+\.\d+\.\d+\z/"
       end
     end
