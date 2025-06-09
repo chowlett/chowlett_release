@@ -13,7 +13,7 @@ namespace :strongstart_release do
 
   desc 'Build the release for the including app (SiTE SOURCES or GRFS).'\
          ' Optional arguments: --no-tests, --dry-run'
-  task :build, [] => :environment do |_, args|
+  task :build, [] => :environment do |_, task_args|
     require_relative './support/build/executor'
 
     parsed = ReleaseTaskUtils.parse_deploy_args task_args.to_a
@@ -31,7 +31,7 @@ namespace :strongstart_release do
           ' Optional arguments: version_tag, --dry-run'
     task :staging, [] => :environment do |_, task_args| # task_args is a Rake::TaskArguments with no keys
       require_relative './support/deploy/executor'
-      
+
       parsed = ReleaseTaskUtils.parse_deploy_args task_args.to_a
 
       deployer = Deploy::Executor.new(environment: :staging, version_tag: parsed[:tag], dry_run: parsed[:dry_run])
