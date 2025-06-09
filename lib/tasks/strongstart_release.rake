@@ -47,10 +47,10 @@ namespace :strongstart_release do
 
   namespace :deploy do
     desc 'Deploy the staging release of the most recent build for the including app (SiTE SOURCES or GRFS)'
-    task :staging, [] => :environment do |_, args| # task_args is a Rake::TaskArguments with no keys, but with values
+    task :staging, [] => :environment do |_, task_args| # task_args is a Rake::TaskArguments with no keys
       require_relative './support/deploy/executor'
       
-      puts 'args: ', ReleaseTaskUtils.parse_deploy_args(task_args.to_a)
+      puts "args: #{ReleaseTaskUtils.parse_deploy_args(task_args.to_a)}"
 
       raise 'Short-circuiting deploy task for testing purposes'
 
@@ -61,10 +61,10 @@ namespace :strongstart_release do
     end
 
     desc 'Deploy the production release of the most recent build for the including app (SiTE SOURCES or GRFS)'
-    task :production, [] => :environment do |_, task_args|
+    task :production, [] => :environment do |_, task_args| # task_args is a Rake::TaskArguments with no keys
       require_relative './support/deploy/executor'
 
-      puts 'args: ', ReleaseTaskUtils.parse_deploy_args(task_args.to_a)
+      puts "args: #{ReleaseTaskUtils.parse_deploy_args(task_args.to_a)}"
 
       raise 'Short-circuiting deploy task for testing purposes'
 

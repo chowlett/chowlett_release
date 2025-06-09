@@ -18,15 +18,17 @@ module ReleaseTaskUtils
   end
 
   def self.parse_deploy_args(args) # rubocop:disable Metrics/MethodLength
+    puts "parsing args: #{args}"
     parsed = {}.with_indifferent_access
     args.each do |arg|
+      puts "Processing argument: '#{arg}'"
       case arg
       when '--dry-run'
         parsed[:dry_run] = true
       when /\A.*\d+\.\d+\.\d+\z/.match(arg)
         parsed[:tag] = arg
       else
-        raise ArgumentError "Unknown argument:' #{arg}'. Valid arguments are:  '--dry-run'" \
+        raise ArgumentError "Unknown argument: '#{arg}'. Valid arguments are:  '--dry-run'" \
                               ", a version tag matching /\A.*\d+\.\d+\.\d+\z/"
       end
     end
