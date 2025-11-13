@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    strongstart_release (1.0.1)
+    chowlett_release (1.0.0)
       aws-sdk-ecr
       aws-sdk-ecs
       aws-sdk-sts
@@ -267,12 +267,12 @@ DEPENDENCIES
   aws-sdk-ecr
   aws-sdk-ecs
   aws-sdk-sts
+  chowlett_release!
   minitest (~> 5.16)
   ostruct
   rails (~> 8.0)
   rake (~> 13.0)
   rubocop
-  strongstart_release!
 
 BUNDLED WITH
    2.6.2

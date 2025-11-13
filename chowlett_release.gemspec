@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/strongstart_release/version'
+require_relative 'lib/chowlett_release/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'strongstart_release'
-  spec.version = StrongstartRelease::VERSION
+  spec.name = 'chowlett_release'
+  spec.version = ChowlettRelease::VERSION
   spec.authors = ['chowlett']
   spec.email = ['chowlett@oxbtech.com']
 
@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.metadata['private'] = 'true'
   spec.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/strongstart'
 
-  spec.metadata['source_code_uri'] = 'https://github.com/strong-start/strongstart_release'
+  spec.metadata['source_code_uri'] = 'https://github.com/chowlett/chowlett_release'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     ls.readlines("\x0", chomp: true).reject do |f|
       (f == gemspec) ||
         f.start_with?(*%w[bin/ test/ spec/ features/ .git appveyor Gemfile]) ||
-        /\Astrongstart_release-.*\.gem/.match?(f)
+        /\Achowlett_release-.*\.gem/.match?(f)
     end
   end
   spec.bindir = 'exe'

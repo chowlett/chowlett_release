@@ -9,9 +9,9 @@
 # so you may want to delete old versions manually from time to time. Local copies of gem
 # files are not checked in to GitHub. so there's that.
 
-require_relative 'lib/strongstart_release/version'
+require_relative 'lib/chowlett_release/version'
 
-gemfile = "strongstart_release-#{StrongstartRelease::VERSION}.gem"
+gemfile = "chowlett_release-#{ChowlettRelease::VERSION}.gem"
 puts "Building #{gemfile}"
 build_cmd = 'gem build'
 

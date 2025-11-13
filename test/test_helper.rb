@@ -13,5 +13,5 @@
 relative_to = __dir__
 $LOAD_PATH.unshift File.expand_path('../lib', relative_to) unless relative_to.nil?
 
-require 'strongstart_release'
+require 'chowlett_release'
 require 'minitest/autorun'

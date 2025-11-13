@@ -6,6 +6,6 @@
 /pkg/
 /spec/reports/
 /tmp/
-/strongstart_release-*.gem
+/chowlett_release-*.gem
 !build/
 

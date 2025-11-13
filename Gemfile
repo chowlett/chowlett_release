@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in strongstart_release.gemspec
+# Specify your gem's dependencies in chowlett_release.gemspec
 gemspec
 
 gem 'rake', '~> 13.0'

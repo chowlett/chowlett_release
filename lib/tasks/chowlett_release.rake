@@ -1,7 +1,7 @@
 require_relative './support/error_chains'
 require_relative './support/release_task_utils'
 
-namespace :strongstart_release do
+namespace :chowlett_release do
   desc 'Prints a "Hello" message to the console. Verifies that the gem is functional.'
   task ping: :environment do
     require_relative './support/ping'
