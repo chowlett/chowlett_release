@@ -8,13 +8,13 @@ Gem::Specification.new do |spec|
   spec.authors = ['chowlett']
   spec.email = ['chowlett@oxbtech.com']
 
-  spec.summary = 'Provides build and deploy rake tasks for SiTE SOURCE and GRFS.'
+  spec.summary = 'POC for Actions access to GitHub Packages gems and for workflow_dispatch via the GitHub API.'
   spec.homepage = 'https://strongstart.ca'
   spec.license = nil
   spec.required_ruby_version = '>= 3.3.5'
 
   spec.metadata['private'] = 'true'
-  spec.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/strongstart'
+  spec.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/chowlett'
 
   spec.metadata['source_code_uri'] = 'https://github.com/chowlett/chowlett_release'
 
@@ -33,9 +33,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   # Uncomment to register a new dependency of your gem
-  spec.add_runtime_dependency 'aws-sdk-ecr'
-  spec.add_runtime_dependency 'aws-sdk-ecs'
-  spec.add_runtime_dependency 'aws-sdk-sts'
+  # spec.add_runtime_dependency 'aws-sdk-ecr'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

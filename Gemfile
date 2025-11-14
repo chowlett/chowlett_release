@@ -7,15 +7,12 @@ gemspec
 
 gem 'rake', '~> 13.0'
 
-gem 'minitest', '~> 5.16'
-
-gem 'aws-sdk-ecr'
-gem 'aws-sdk-ecs'
-gem 'aws-sdk-sts'
-
 gem 'ostruct'
+gem 'octokit'
 
 group :development, :test do
+  gem 'minitest', '~> 5.16'
+
   gem 'rubocop'
 end
 

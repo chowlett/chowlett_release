@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Build this gem and publish it to Strong Start's GitHub Packages repository.
+# Build this gem and publish it to chowlett's GitHub Packages repository.
 # # Requires that a personal access token be configured in ~/.gem/credentials. The token
 # # must be "classic" (not fine-grained) and must have the 'read:packages' and `write:packages`
 # scopes.
@@ -21,7 +21,7 @@ unless system(build_cmd)
 end
 
 puts "Publishing #{gemfile} to GitHub Packages"
-publish_cmd = "gem push --key github --host https://rubygems.pkg.github.com/strong-start #{gemfile}"
+publish_cmd = "gem push --key github --host https://rubygems.pkg.github.com/chowlett #{gemfile}"
 if system(publish_cmd)
   puts "Successfully published #{gemfile} to GitHub Packages."
 else
